@@ -1,4 +1,8 @@
 // server.js - Express MongoDB API for Railway Inspector App
+// SECURE VERSION - Environment variables used instead of hardcoded credentials
+
+require('dotenv').config(); // Load environment variables
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -13,11 +17,11 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
-// Configure Cloudinary
+// SECURE: Configure Cloudinary with environment variables
 cloudinary.config({
-  cloud_name: 'drqinrgtd',
-  api_key: '116388688341629',
-  api_secret: 'BpfGzJO5vP-twe89CQMG3H7P2WM'
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 // Configure Multer for file uploads
@@ -32,8 +36,8 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-// MongoDB Connection
-mongoose.connect('mongodb+srv://nisalperera619:bkbUCRVlVj9tvFy0@cluster0.nw2ig.mongodb.net/CGRTrackChecker', {
+// SECURE: MongoDB Connection with environment variable
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
@@ -172,7 +176,7 @@ app.get('/api/reports/stats/pie', async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching stats:', err);
-    res.status(500).json({ message: 'Server error' });a
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -369,7 +373,6 @@ app.delete('/api/defects/:id', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
-// Add these new routes to your existing server.js file
 
 // Get all users
 app.get('/api/users', async (req, res) => {
@@ -484,6 +487,7 @@ app.put('/api/users/:id', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 // Generate some sample data for testing
 app.post('/api/seed', async (req, res) => {
   try {
